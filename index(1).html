@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FREE WEB</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Root Variables for a Cohesive Neon Palette */
+    :root {
+      --dark-bg: #0a0d17;
+      --card-bg: #1a1f2c;
+      --text-light: #e0e6f0;
+      --text-dark: #0d1117;
+
+      --neon-cyan: #00f0ff;
+      --neon-blue: #00aaff;
+      --neon-purple: #a050ff;
+      --neon-green: #3aff95;
+      --neon-red: #ff4d4d;
+      --neon-yellow: #fff000;
+
+      --border-glow-strength: 0 0 20px;
+      --text-glow-strength: 0 0 10px;
+    }
+
+    /* Login Page Styles */
+    .login-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0a0d17 0%, #1a1f2c 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .login-box {
+      width: 90%;
+      max-width: 450px;
+      padding: 40px;
+      background: rgba(26, 31, 44, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-box::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(0,240,255,0.1) 0%, rgba(0,240,255,0) 70%);
+      animation: rotate 15s linear infinite;
+      z-index: 0;
+    }
+
+    .login-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-logo svg {
+      width: 100%;
+      height: 80px;
+      filter: drop-shadow(0 0 10px var(--neon-cyan));
+    }
+
+    .login-logo svg text {
+      font-family: 'Orbitron', sans-serif;
+      fill: none;
+      stroke: var(--neon-cyan);
+      stroke-width: 2px;
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      animation: dash 5s linear forwards;
+      font-size: 42px;
+      font-weight: 700;
+    }
+
+    .login-title {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--neon-cyan);
+      margin-bottom: 30px;
+      text-shadow: var(--text-glow-strength) var(--neon-cyan);
+    }
+
+    .login-input-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .login-input-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--neon-cyan);
+      font-weight: 600;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 14px 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(0, 240, 255, 0.3);
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .login-input:focus {
+      outline: none;
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 20px;
+      box-shadow: 0 5px 15px rgba(0, 170, 255, 0.3);
+    }
+
+    .login-button:hover {
+      background: linear-gradient(45deg, var(--neon-purple), var(--neon-cyan));
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(160, 80, 255, 0.4);
+    }
+
+    .login-error {
+      color: var(--neon-red);
+      text-align: center;
+      margin-top: 15px;
+      font-weight: 600;
+      display: none;
+      text-shadow: 0 0 8px rgba(255, 77, 77, 0.5);
+    }
+
+    /* Universal Box Sizing & Font Smoothing */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Body & HTML Styling */
+    body {
+      background: var(--dark-bg);
+      font-family: 'Poppins', sans-serif;
+      color: var(--text-light);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 30px;
+      overflow-y: auto;
+    }
+
+    /* Predictor Content Styles (now always visible) */
+    #predictor-content {
+      display: none;
+      width: 100%;
+      max-width: 500px;
+      margin: auto;
+      padding: 0;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Predictor UI Elements */
+    .container {
+      max-width: 500px;
+      width: 100%;
+      margin: auto;
+      padding: 0;
+      z-index: 10;
+      position: relative;
+    }
+
+    /* SVG Wrapper for Animated Title */
+    .wrapper {
+      text-align: center;
+      margin-bottom: 50px;
+      filter: drop-shadow(0 0 10px var(--neon-cyan));
+    }
+    .wrapper svg {
+      width: 100%;
+      height: 80px;
+    }
+    .wrapper svg text {
+      font-family: 'Orbitron', sans-serif;
+      fill: none;
+      stroke: var(--neon-cyan);
+      stroke-width: 2px;
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      animation: dash 5s linear infinite alternate;
+      font-size: 42px;
+      font-weight: 700;
+    }
+
+    @keyframes dash {
+      0% { stroke-dashoffset: 600; }
+      100% { stroke-dashoffset: 0; }
+    }
+
+    /* Card Styling */
+    .card {
+      background: var(--card-bg);
+      border-radius: 25px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: var(--border-glow-strength) var(--neon-blue), inset 0 0 8px rgba(0, 255, 255, 0.2);
+      padding: 30px;
+      margin-top: 30px;
+      backdrop-filter: blur(8px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-7px);
+      box-shadow: var(--border-glow-strength) var(--neon-purple), inset 0 0 10px rgba(160, 80, 255, 0.3);
+    }
+
+    /* Period Label & Input */
+    .period-label {
+      font-weight: 700;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      color: var(--neon-cyan);
+      text-shadow: var(--text-glow-strength) var(--neon-cyan);
+      font-size: 1.1em;
+    }
+    .period-label i {
+      margin-right: 12px;
+      font-size: 1.3em;
+    }
+    .period-input {
+       width: 100%;
+      padding: 14px;
+      text-align: center;
+      font-size: 24px;
+      font-family: 'Orbitron', sans-serif;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid var(--neon-blue);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      color: var(--neon-green);
+      box-shadow: inset 0 0 10px rgba(58, 255, 149, 0.6);
+      text-shadow: var(--text-glow-strength) var(--neon-green);
+    }
+
+    /* Prediction & Opposite Number Section */
+    .result-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+    .result-section span i {
+      margin-right: 10px;
+      color: var(--neon-cyan);
+    }
+    .big-text {
+      background: linear-gradient(45deg, var(--neon-green), var(--neon-cyan));
+      padding: 10px 20px;
+      border-radius: 18px;
+      color: var(--text-dark);
+      font-weight: 800;
+      text-shadow: none;
+      box-shadow: 0 0 12px rgba(58, 255, 149, 0.8);
+      font-size: 1.3em;
+    }
+    .opposite-number {
+      font-size: 20px;
+      color: var(--neon-purple);
+      font-weight: 700;
+      text-shadow: var(--text-glow-strength) var(--neon-purple);
+    }
+
+    /* Dashboard Title */
+    .dashboard-title {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 30px;
+      border-bottom: 3px solid rgba(0, 255, 255, 0.4);
+      padding-bottom: 12px;
+      color: var(--neon-cyan);
+      text-shadow: var(--text-glow-strength) var(--neon-cyan);
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+      font-size: 1.1em;
+    }
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    .info-row span:first-child {
+      display: flex;
+      align-items: center;
+      color: var(--text-light);
+    }
+    .info-row span:first-child i {
+      margin-right: 10px;
+      color: var(--neon-blue);
+      font-size: 1.2em;
+    }
+    .info-row span:last-child {
+      font-weight: 800;
+      color: var(--neon-green);
+      text-shadow: var(--text-glow-strength) var(--neon-green);
+      font-size: 1.1em;
+    }
+    .connected {
+      color: var(--neon-green);
+      font-weight: bold;
+      text-shadow: var(--text-glow-strength) var(--neon-green);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-weight: 700;
+      font-size: 16px;
+      margin-top: 50px;
+      color: var(--neon-cyan);
+      text-shadow: var(--text-glow-strength) var(--neon-cyan);
+      filter: drop-shadow(0 0 6px var(--neon-cyan));
+    }
+
+    /* History Section */
+    .history-title {
+      font-size: 26px;
+      font-weight: 800;
+      margin-top: 50px;
+      text-align: center;
+      color: var(--neon-cyan);
+      text-shadow: var(--text-glow-strength) var(--neon-cyan);
+    }
+    .history-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--border-glow-strength) rgba(0, 255, 255, 0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      font-size: 1em;
+      border-left: 6px solid transparent;
+    }
+    .history-card:hover {
+      transform: translateX(7px);
+      box-shadow: var(--border-glow-strength) rgba(0, 255, 255, 0.4);
+    }
+    .history-card.yellow {
+      border-left-color: var(--neon-yellow);
+      box-shadow: var(--border-glow-strength) rgba(255, 255, 0, 0.3);
+    }
+    .history-card.green {
+      border-left-color: var(--neon-green);
+      box-shadow: var(--border-glow-strength) rgba(58, 255, 149, 0.3);
+    }
+    .history-card.red {
+      border-left-color: var(--neon-red);
+      box-shadow: var(--border-glow-strength) rgba(255, 77, 77, 0.3);
+    }
+    .history-card div strong {
+      color: var(--neon-cyan);
+      text-shadow: var(--text-glow-strength) rgba(0, 255, 255, 0.6);
+    }
+    .history-card div i {
+      margin-right: 8px;
+      color: var(--neon-blue);
+      font-size: 1.1em;
+    }
+    .history-actions i {
+      margin-left: 18px;
+      font-size: 1.4em;
+      cursor: pointer;
+      transition: color 0.2s ease, transform 0.2s ease;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,0.6));
+    }
+    .fa-trash-alt {
+      color: var(--neon-red);
+    }
+    .fa-trash-alt:hover {
+      transform: scale(1.3);
+      color: #ff0000;
+    }
+    .spinner {
+      animation: spin 1.5s linear infinite;
+      color: var(--neon-yellow);
+      filter: drop-shadow(0 0 6px var(--neon-yellow));
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .win-icon {
+      animation: bounce 0.8s ease-in-out infinite;
+      color: var(--neon-green);
+      filter: drop-shadow(0 0 6px var(--neon-green));
+      font-size: 1.2em;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.4); }
+    }
+    .loss-icon {
+      animation: shake 0.6s ease-in-out infinite;
+      color: var(--neon-red);
+      filter: drop-shadow(0 0 6px var(--neon-red));
+      font-size: 1.2em;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); }
+      75% { transform: translateX(-6px); }
+    }
+
+    /* Telegram Link Button Styling */
+    .telegram-button-container {
+        text-align: center;
+        margin-top: 40px;
+        margin-bottom: 40px;
+    }
+
+    .telegram-button {
+        display: inline-block;
+        padding: 15px 30px;
+        background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+        color: var(--text-light);
+        font-family: 'Poppins', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        border-radius: 30px;
+        text-decoration: none;
+        box-shadow: var(--border-glow-strength) var(--neon-blue), inset 0 0 10px rgba(0, 170, 255, 0.4);
+        transition: all 0.3s ease;
+        text-shadow: var(--text-glow-strength) var(--neon-cyan);
+        border: none;
+        cursor: pointer;
+    }
+
+    .telegram-button:hover {
+        background: linear-gradient(45deg, var(--neon-purple), var(--neon-cyan));
+        box-shadow: var(--border-glow-strength) var(--neon-purple), inset 0 0 12px rgba(160, 80, 255, 0.6);
+        transform: translateY(-5px) scale(1.02);
+        color: #ffffff;
+    }
+
+    .telegram-button i {
+        margin-right: 10px;
+        font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Page -->
+  <div class="login-container" id="loginPage">
+    <div class="login-box">
+      <div class="login-content">
+        <div class="login-logo">
+          <svg viewBox="0 0 400 70">
+            <text x="50%" y="50%" dy=".35em" text-anchor="middle">
+              ( DEEP WEB )
+            </text>
+          </svg>
+        </div>
+        
+        <div class="login-title">PREDICTOR PRO LOGIN</div>
+        
+        <div class="login-input-group">
+          <label for="loginUsername"><i class="fas fa-user"></i> USERNAME</label>
+          <input type="text" id="loginUsername" class="login-input" placeholder="Enter your username">
+        </div>
+        
+        <div class="login-input-group">
+          <label for="loginPassword"><i class="fas fa-lock"></i> PASSWORD</label>
+          <input type="password" id="loginPassword" class="login-input" placeholder="Enter your password">
+        </div>
+        
+        <button class="login-button" onclick="validateLogin()">
+          <i class="fas fa-sign-in-alt"></i> LOGIN
+        </button>
+        
+        <div class="login-error" id="loginError">
+          <i class="fas fa-exclamation-triangle"></i> Invalid username or password!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Predictor Content (hidden initially) -->
+  <div id="predictor-content">
+    <div class="container">
+      <div class="wrapper">
+        <svg viewBox="0 0 400 70">
+          <text x="50%" y="50%" dy=".35em" text-anchor="middle">
+            ( DEEP WEB )
+          </text>
+        </svg>
+      </div>
+
+      <div class="card">
+        <div class="period-label"><i class="fa-solid fa-calendar-days"></i> Current Period</div>
+        <input type="text" id="periodDisplay" class="period-input" value="-" readonly />
+        <div class="result-section">
+          <span><i class="fa-solid fa-chart-bar"></i> Prediction</span>
+          <span class="big-text" id="predictionDisplay">-</span>
+          <span class="opposite-number" id="oppositeNumberDisplay">-</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="dashboard-title">Analysis Dashboard</div>
+        <div class="info-row"><span><i class="fa-solid fa-percent"></i> Win Rate</span><span id="accuracy">0%</span></div>
+        <div class="info-row"><span><i class="fa-solid fa-trophy"></i> Wins</span><span id="wins">0</span></div>
+        <div class="info-row"><span><i class="fa-solid fa-skull-crossbones"></i> Losses</span><span id="losses">0</span></div>
+        <div class="info-row"><span><i class="fa-solid fa-server"></i> Server Status</span><span class="connected">Connected</span></div>
+      </div>
+
+      <div class="history-title">Prediction History</div>
+      <div id="historyContainer"></div>
+
+      <div class="telegram-button-container">
+        <a href="https://t.me/+-8F8igKsecs2Y2M1" target="_blank" class="telegram-button">
+          <i class="fab fa-telegram-plane"></i> Join Telegram
+        </a>
+      </div>
+    </div>
+  </div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+<script>
+  // Firebase Configuration - REPLACE WITH YOUR ACTUAL FIREBASE CONFIG
+  // **IMPORTANT**: Replace with your real Firebase config details.
+  const firebaseConfig = {
+    apiKey: "AIzaSyBzOKZZAxoBc9OPJeI13H5B7Ap8Aj2PbpY",
+    databaseURL: "https://lwfle-89726-default-rtdb.firebaseio.com/"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // Valid credentials (in a real app, this would be server-side)
+  const validCredentials = {
+    "admin": "Wingo@2024",
+    "vip": "Predictor$500",
+    "premium": "AccessAll#1"
+  };
+
+  // Validate login function
+  function validateLogin() {
+    const username = document.getElementById("loginUsername").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    const errorElement = document.getElementById("loginError");
+    
+    // Check if credentials are valid
+    if (validCredentials[username] && validCredentials[username] === password) {
+      // Successful login
+      document.getElementById("loginPage").style.display = "none";
+      document.getElementById("predictor-content").style.display = "block";
+      startPredictor();
+    } else {
+      // Failed login
+      errorElement.style.display = "block";
+      setTimeout(() => {
+        errorElement.style.display = "none";
+      }, 3000);
+      
+      // Shake animation for wrong credentials
+      document.querySelector(".login-box").style.animation = "shake 0.5s";
+      setTimeout(() => {
+        document.querySelector(".login-box").style.animation = "";
+      }, 500);
+    }
+  }
+
+  // Allow login on Enter key press
+  document.getElementById("loginPassword").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+      validateLogin();
+    }
+  });
+
+  // --- Global Variables for Predictor ---
+  let historyData = [];
+  let lastFetchedPeriod = null;
+  let lastPrediction = null;
+  let lastOppositeNumber = null;
+  let globalPrediction = null;
+  let predictorInterval = null; // Interval for the main prediction cycle
+
+  // --- Helper to get opposite number based on prediction (BIG/SMALL) ---
+  function getOppositeNumber(prediction) {
+    const smallNumbers = [1, 2, 3, 4, 0];
+    const bigNumbers = [8, 9, 7, 6, 5];
+    let arr = prediction === "BIG" ? smallNumbers : bigNumbers;
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  // --- AI Prediction Logic (Ultra AI Predict) ---
+  function ultraAIPredict(history) {
+    if (history.length < 5) {
+      return { prediction: Math.random() > 0.5 ? "BIG" : "SMALL" };
+    }
+    let recentResults = history.filter(h => h.result !== "-").slice(0, 5);
+    let bigCount = 0;
+    let smallCount = 0;
+    let weight = 1;
+    for (let i = recentResults.length - 1; i >= 0; i--) {
+      let result = recentResults[i].result;
+      if (result >= 5) {
+        bigCount += weight;
+      } else {
+        smallCount += weight;
+      }
+      weight *= 1.2;
+    }
+    return { prediction: bigCount > smallCount ? "BIG" : "SMALL" };
+  }
+
+  // --- Update the status (WIN/LOSS) of the last prediction based on the actual result ---
+  function updateLastStatus(actualNumber) {
+    const actualCategory = actualNumber >= 5 ? 'BIG' : 'SMALL';
+    const match = actualCategory === lastPrediction;
+    lastStatus = match ? 'WIN' : 'LOSS';
+  }
+
+  // --- Fetch game result from external API ---
+  async function fetchGameResult() {
+    try {
+      let response = await fetch("https://api.bdg88zf.com/api/webapi/GetNoaverageEmerdList", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pageSize: 10, pageNo: 1, typeId: 1, language: 0,
+          random: "4a0522c6ecd8410496260e686be2a57c",
+          signature: "334B5E70A0C9B8918B0B15E517E2069C",
+          timestamp: Math.floor(Date.now() / 1000)
+        })
+      });
+      let data = await response.json();
+      return data?.data?.list?.[0] || null;
+    } catch (e) {
+      console.error("API Error fetching game result:", e);
+      return null;
+    }
+  }
+
+  // --- Main function to update prediction based on period change ---
+  async function updatePrediction() {
+    let result = await fetchGameResult();
+    
+    if (!result) {
+        console.warn("No API result or API error. Retrying in 5 seconds...");
+        setTimeout(updatePrediction, 5000); // Retry after 5 seconds
+        return;
+    }
+
+    // Only update if the period has actually changed
+    if (result.issueNumber === lastFetchedPeriod) {
+        // console.log("Period not changed, waiting for next period.");
+        return; // Do nothing if the period hasn't changed
+    }
+
+    // If there's a pending prediction in history, update its status
+    if (historyData.length > 0 && historyData[0].resultStatus === "Pending") {
+      const actualNumber = Number(result.number);
+      updateLastStatus(actualNumber);
+      historyData[0].result = actualNumber;
+      historyData[0].resultStatus = lastStatus;
+    }
+
+    // Generate a new AI prediction for the upcoming period
+    const aiDecision = ultraAIPredict(historyData);
+    lastPrediction = aiDecision.prediction;
+    lastOppositeNumber = getOppositeNumber(lastPrediction);
+    globalPrediction = lastPrediction;
+
+    let nextPeriodFull = (BigInt(result.issueNumber) + 1n).toString();
+    let nextPeriod = nextPeriodFull.slice(-4);
+
+    // Update UI for current prediction
+    document.getElementById("periodDisplay").value = nextPeriod;
+    document.getElementById("predictionDisplay").innerText = globalPrediction;
+    document.getElementById("oppositeNumberDisplay").innerText = lastOppositeNumber;
+
+    // Add the new prediction to history (as pending)
+    historyData.unshift({
+      period: nextPeriod,
+      prediction: globalPrediction,
+      oppositeNumber: lastOppositeNumber,
+      result: "-",
+      resultStatus: "Pending"
+    });
+
+    if (historyData.length > 20) {
+        historyData.pop();
+    }
+
+    updateHistory();
+    updateStats();
+    lastFetchedPeriod = result.issueNumber; // Update last fetched period
+  }
+
+  // --- Delete an entry from history ---
+  function deleteHistory(index) {
+    historyData.splice(index, 1);
+    updateHistory();
+    updateStats();
+  }
+
+  // --- Update history UI ---
+  function updateHistory() {
+    const container = document.getElementById("historyContainer");
+    container.innerHTML = historyData.map((item, index) => {
+      let color = item.resultStatus === "WIN" ? "green" : item.resultStatus === "LOSS" ? "red" : "yellow";
+      let iconClass = item.resultStatus === "WIN" ? "fa-circle-check win-icon" :
+                      item.resultStatus === "LOSS" ? "fa-circle-xmark loss-icon" :
+                      "fa-spinner spinner";
+      return `<div class="history-card ${color}">
+        <div style="flex: 1;">
+          <div><strong><i class="fa fa-calendar-alt"></i> P-${item.period}</strong></div>
+          <div><i class="fa fa-chart-line"></i> ${item.prediction} | <i class="fa fa-sync-alt"></i> ${item.oppositeNumber}</div>
+          <div><i class="fa fa-dice"></i> ${item.result !== "-" ? item.result : "Waiting..."}</div>
+        </div>
+        <div class="history-actions">
+          <i class="fa ${iconClass}"></i>
+          <i class="fa-solid fa-trash-alt" onclick="deleteHistory(${index})"></i>
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  // --- Update dashboard statistics ---
+  function updateStats() {
+    const wins = historyData.filter(item => item.resultStatus === "WIN").length;
+    const losses = historyData.filter(item => item.resultStatus === "LOSS").length;
+    const total = wins + losses;
+    const accuracy = total > 0 ? ((wins / total) * 100).toFixed(2) : 0;
+    document.getElementById("wins").textContent = wins;
+    document.getElementById("losses").textContent = losses;
+    document.getElementById("accuracy").textContent = `${accuracy}%`;
+  }
+
+  // --- Function to start the predictor's updates ---
+  function startPredictor() {
+    // Initial fetch
+    updatePrediction();
+    // Set an interval to check for new periods periodically (e.g., every 5 seconds)
+    predictorInterval = setInterval(updatePrediction, 5000); // Check every 5 seconds
+  }
+</script>
+</body>
+</html>
